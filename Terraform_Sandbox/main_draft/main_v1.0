@@ -1,0 +1,29 @@
+resource "google_compute_instance" "test_resource" {
+    count = "${length(var.instance_count)}"
+    name = "list-${count.index+1}"
+    zone = "asia-south-1a"
+    machine_type = var.machine_type["dev"]
+
+    boot_disk {
+      initialize_params {
+        image = var.image
+      }
+      
+    }
+
+    network_interface {
+      network = "default"
+    }
+
+    service_account {
+      scopes = ["test-account", "service-account-test"]
+    }
+}
+
+output "name" { value = "${google_compute_instance.test_resource.*.name}"}
+
+output "machine_zone" { value = "${google_compute_instance.test_resource.*.machine_type}"}
+
+output "machine_type" {value = "${google_compute_instance.test_resource.*.machine_type}"}
+
+output "instance_ids" { value = join(",",google_compute_instance.test_resource.*.id)}

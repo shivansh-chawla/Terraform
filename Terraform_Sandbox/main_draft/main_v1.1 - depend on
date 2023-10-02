@@ -1,0 +1,53 @@
+resource "google_compute_instance" "test_resource1" {
+    count = "1"
+    name = "first"
+    zone = "asia-south-1a"
+    machine_type = var.machine_type["dev"]
+
+    boot_disk {
+      initialize_params {
+        image = var.image
+      }
+      
+    }
+
+    network_interface {
+      network = "default"
+    }
+
+    service_account {
+      scopes = ["test-account", "service-account-test"]
+    }
+}
+
+resource "google_compute_instance" "test_resource2" {
+    count = "1"
+    name = "first"
+    zone = "asia-south-1a"
+    machine_type = var.machine_type["dev"]
+
+    boot_disk {
+      initialize_params {
+        image = var.image
+      }
+      
+    }
+
+    network_interface {
+      network = "default"
+    }
+
+    service_account {
+      scopes = ["test-account", "service-account-test"]
+    }
+
+    depends_on = [ google_compute_instance.test_resource1 ]
+}
+
+output "name" { value = "${google_compute_instance.test_resource1.*.name}"}
+
+output "machine_zone" { value = "${google_compute_instance.test_resource2.*.machine_type}"}
+
+output "machine_type" {value = "${google_compute_instance.test_resource1.*.machine_type}"}
+
+#output "instance_ids" { value = join(",",google_compute_instance.test_resource.*.id)}
